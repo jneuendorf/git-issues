@@ -1,0 +1,44 @@
+#!/bin/sh
+#!#/usr/bin/env bash
+
+
+# GITHUB
+# curl -u jneuendorf -i https://api.github.com/repos/jneuendorf/UMLEditor/issues
+
+
+# GITLAB
+# curl -u jneuendorf -i https://some.gitlab.com/api/v3/projects/:id/issues
+
+
+# configuration file: .git-issues.json
+# default url is value of .git/config->origin
+# https://github.com/jneuendorf/git-issues.git (TODO strip '.git', add '/issues')
+
+# common options:
+# state	string	Can be either open, closed, or all. Default: open
+
+# get project name from parent folder name
+# parentdir=$(dirname `pwd`)
+
+# set +x
+
+if [[ "$1" == "fetch" ]]; then
+    # get the 2nd line from git output (NOTE: xargs is used for trimming leading and trailing whitespaces)
+    remote=$(git remote show -n origin | head -2 | tail -1 | xargs)
+    # strip the '  Fetch URL: ' from the beginning and remove '.git' from the end => only the URL is left
+    len=${#remote}
+    remote=${remote:11:$(($len - 4 - 11))}
+    echo $remote
+
+    # string contains 'github.com'?
+    if [[ $remote == *"github.com"* ]]; then
+        echo "GITHUB"
+    else
+        echo "GITLAB"
+    fi
+
+elif [[ "$1" == "show" ]]; then
+    echo "show"
+else
+    echo "Usage: git-issues show|fetch"
+fi

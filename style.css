@@ -1,0 +1,39 @@
+.row {
+    margin-top: 10px;
+}
+
+.h1 {
+    float: left;
+    height: 80px;
+    line-height: 80px;
+    margin: 0 50px 0 0;
+}
+
+.logos {
+    float: left;
+}
+
+.logo {
+    background: 50% 50% / 85% 85% no-repeat transparent;
+    border-radius: 50%;
+    float: left;
+    height: 80px;
+    margin: 0 0 0 20px;
+    padding: 10px;
+    width: 80px;
+}
+.logo:hover {
+    background-color: #ddd;
+    box-shadow: 0 0 10px 2px #ddd;
+}
+
+.logo.github {
+    background-image: url(img/github_logo.png);
+}
+.logo.gitlab {
+    background-image: url(img/gitlab_logo.svg);
+}
+
+input {
+
+}

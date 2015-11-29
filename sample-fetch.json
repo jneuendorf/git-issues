@@ -735,7 +735,7 @@
     "labels": [
 
     ],
-    "state": "open",
+    "state": "closed",
     "locked": false,
     "assignee": null,
     "milestone": null,
@@ -790,12 +790,6 @@
     "created_at": "2012-02-13T21:44:26Z",
     "updated_at": "2014-06-12T10:30:22Z",
     "closed_at": null,
-    "pull_request": {
-      "url": "https://api.github.com/repos/mishoo/UglifyJS/pulls/316",
-      "html_url": "https://github.com/mishoo/UglifyJS/pull/316",
-      "diff_url": "https://github.com/mishoo/UglifyJS/pull/316.diff",
-      "patch_url": "https://github.com/mishoo/UglifyJS/pull/316.patch"
-    },
     "body": "It may be valuable to be able to tell the difference between these two\r\nconstructs even though their meanings are identical.\r\n{'foo': 1}\r\nand\r\n{foo: 1}\r\n\r\nFor instance there are some very powerful minifications that can be made\r\nwith careful site-wide passes. Also if you are using uglify's AST for\r\nlinting this comes in handy."
   },
   {
@@ -829,7 +823,7 @@
     "labels": [
 
     ],
-    "state": "open",
+    "state": "closed",
     "locked": false,
     "assignee": null,
     "milestone": null,
@@ -837,12 +831,6 @@
     "created_at": "2012-01-27T22:47:11Z",
     "updated_at": "2014-06-12T10:38:28Z",
     "closed_at": null,
-    "pull_request": {
-      "url": "https://api.github.com/repos/mishoo/UglifyJS/pulls/309",
-      "html_url": "https://github.com/mishoo/UglifyJS/pull/309",
-      "diff_url": "https://github.com/mishoo/UglifyJS/pull/309.diff",
-      "patch_url": "https://github.com/mishoo/UglifyJS/pull/309.patch"
-    },
     "body": "Potentially unsafe, but was an easy add and I know a lot of people who want this, not only does it make the code even smaller (20% in my non-trivial use case) but it's also a nice to have feature if you want to make sure that nobody calls / accesses the stuff :)\r\n\r\nLet me know what you think about it.\r\n\r\nBest\r\nIvo"
   },
   {

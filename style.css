@@ -58,8 +58,17 @@
     margin: 60px 0 0 0;
 }
 
+
+/*ISSUES*/
+.issues_output {
+    cursor: pointer;
+    margin: 30px 0 0 0;
+}
 .row.issue {
-    height: 60px;
+    margin-top: 0;
+}
+.row.issue:hover {
+    background-color: #eee;
 }
 .row.issue > .icon {
     line-height: 60px;
@@ -68,6 +77,13 @@
 .row.issue .octicon {
     font-size: 26px;
 }
+img.avatar {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+
 
 /*ALERT*/
 .alert.error {
@@ -77,6 +93,7 @@
     top: 100px;
     width: 50%;
 }
+
 
 
 /*FROM GITHUB*/

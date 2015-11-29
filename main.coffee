@@ -210,16 +210,27 @@ $(document).ready () ->
             res = ""
             for issue in _issues
                 created_at = parse_date_string(issue.created_at)
-                res += """<div class="row issue">
+                # get icon
+                if issue.pull_request?
+                    icon = "octicon-git-pull-request"
+                else
+                    if issue.state is "open"
+                        icon = "octicon-issue-opened"
+                    else
+                        icon = "octicon-issue-closed"
+                # TODO: labels using string_to_color: <span class="label label-default">Default</span>
+                res += """<div class="row list-group-item issue">
+                            <!--span class="badge">14</span-->
                             <div class="col-xs-1 icon">
-                                <span class="octicon octicon-git-pull-request open"></span>
+                                <span class="octicon #{icon} #{issue.state}"></span>
                             </div>
                             <div class="col-xs-10">
                                 <h4>#{issue.title}</h4>
-                                ##{issue.number} updated on #{created_at.date} at #{created_at.time}
+                                ##{issue.number} updated on #{created_at.date} at #{created_at.time} by #{issue.user.login}
                             </div>
                             <div class="col-xs-1">
-                                <span class="octicon octicon-comment"></span>
+                                <img class="avatar" src="#{issue.user.avatar_url}" />
+                                <!--span class="octicon octicon-comment"></span-->
                             </div>
                         </div>"""
             issues_output.empty().append res
@@ -262,7 +273,7 @@ $(document).ready () ->
     project_name_input = $(".project_name")
     projects_select_box = $(".projects")
     accounts_select_box = $(".accounts")
-    issues_output = $(".issues")
+    issues_output = $(".issues_output")
 
     actions_options = $(".actions_options")
     show_issues_btn = $(".show_issues")

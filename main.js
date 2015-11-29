@@ -221,14 +221,23 @@
     }
      */
     show_issues = function(project_index) {
-      var _issues, created_at, i, issue, len, res;
+      var _issues, created_at, i, icon, issue, len, res;
       _issues = window.issues[project_index];
       if (_issues != null) {
         res = "";
         for (i = 0, len = _issues.length; i < len; i++) {
           issue = _issues[i];
           created_at = parse_date_string(issue.created_at);
-          res += "<div class=\"row issue\">\n    <div class=\"col-xs-1 icon\">\n        <span class=\"octicon octicon-git-pull-request open\"></span>\n    </div>\n    <div class=\"col-xs-10\">\n        <h4>" + issue.title + "</h4>\n        #" + issue.number + " updated on " + created_at.date + " at " + created_at.time + "\n    </div>\n    <div class=\"col-xs-1\">\n        <span class=\"octicon octicon-comment\"></span>\n    </div>\n</div>";
+          if (issue.pull_request != null) {
+            icon = "octicon-git-pull-request";
+          } else {
+            if (issue.state === "open") {
+              icon = "octicon-issue-opened";
+            } else {
+              icon = "octicon-issue-closed";
+            }
+          }
+          res += "<div class=\"row list-group-item issue\">\n    <!--span class=\"badge\">14</span-->\n    <div class=\"col-xs-1 icon\">\n        <span class=\"octicon " + icon + " " + issue.state + "\"></span>\n    </div>\n    <div class=\"col-xs-10\">\n        <h4>" + issue.title + "</h4>\n        #" + issue.number + " updated on " + created_at.date + " at " + created_at.time + " by " + issue.user.login + "\n    </div>\n    <div class=\"col-xs-1\">\n        <img class=\"avatar\" src=\"" + issue.user.avatar_url + "\" />\n        <!--span class=\"octicon octicon-comment\"></span-->\n    </div>\n</div>";
         }
         issues_output.empty().append(res);
         return true;
@@ -265,7 +274,7 @@
     project_name_input = $(".project_name");
     projects_select_box = $(".projects");
     accounts_select_box = $(".accounts");
-    issues_output = $(".issues");
+    issues_output = $(".issues_output");
     actions_options = $(".actions_options");
     show_issues_btn = $(".show_issues");
     fetch_issues_btn = $(".fetch_issues");

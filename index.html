@@ -28,32 +28,137 @@
         <div style="height: 30px;"></div>
 
         <div class="row">
-            <div class="col-xs-3 col-xs-push-3">
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="vcs" value="github" checked>
-                        GitHub
-                    </label>
-                </div>
-                <input type="hidden" name="name" value="https://github.com/" />
+            <div class="col-xs-2">
+                <label>Projects:</label>
             </div>
-            <div class="col-xs-3 col-xs-push-3">
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="vcs" value="gitlab">
-                        GitLab
-                    </label>
-                </div>
-                <input type="text" class="form-control gitlab_url" placeholder="https://my.gitlab.com/" disabled="" />
+            <div class="col-xs-6">
+                <select class="form-control projects"></select>
+            </div>
+            <div class="col-xs-4">
+                <button class="btn btn-primary new_project" type="button" name="button">Setup new project</button>
+                <button class="btn btn-danger delete_project" type="button" name="button" disabled="">Delete current project</button>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-6">
-                Project name (including organization or user name)
+        <div style="height: 30px;"></div>
+
+        <div class="new_project_options" style="display: none;">
+            <div class="row">
+                <div class="col-xs-2">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="vcs" value="github" checked />
+                            GitHub
+                        </label>
+                    </div>
+                    <input type="hidden" name="name" value="https://github.com/" />
+                </div>
+                <div class="col-xs-2">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="vcs" value="gitlab" />
+                            GitLab
+                        </label>
+                    </div>
+                    <input type="text" class="form-control gitlab_url" placeholder="https://my.gitlab.com/" disabled="" />
+                </div>
+                <div class="col-xs-7 col-xs-push-1">
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <div class="user_icon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </div>
+                        </div>
+                        <div class="col-xs-8" style="display: none;">
+                            <select class="form-control accounts"></select>
+                        </div>
+                        <div class="col-xs-3" style="display: none;">
+                            <button class="btn btn-primary" type="button" name="button" data-toggle="modal" data-target="#create_account_modal">Create account</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" placeholder="me/helloworld or my_company/project" />
+            <div class="row">
+                <div class="col-xs-5">
+                    Project name (including organization or user name)
+                </div>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control project_name" placeholder="me/helloworld or my_company/project" />
+                </div>
             </div>
+            <div class="row">
+                <div class="col-xs-1 col-xs-push-5">
+                    <button class="btn btn-primary create_project" type="button" name="button">Create project</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions_options">
+            <div class="row">
+                <div class="col-xs-4">
+                    <button class="btn btn-primary show_issues" type="button" disabled="disabled">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                        &nbsp;
+                        Show
+                    </button>
+                    <button class="btn btn-info fetch_issues" type="button" disabled="disabled">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                        &nbsp;
+                        Fetch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="create_account_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Authentication data</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" method="post">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-xs-3 control-label">User name</label>
+                            <div class="col-xs-9">
+                                <input type="email" class="form-control user_name" placeholder="User name">
+                            </div>
+                         </div>
+                         <div class="form-group">
+                             <label for="inputPassword3" class="col-xs-3 control-label">Auth token</label>
+                             <div class="col-xs-9">
+                                 <input type="text" class="form-control auth_token" placeholder="Auth token">
+                             </div>
+                         </div>
+                         <div class="form-group">
+                             <div class="col-xs-offset-3 col-xs-9">
+                                 <div class="checkbox">
+                                     <label>
+                                         <input type="checkbox" /> Set as default
+                                     </label>
+                                 </div>
+                             </div>
+                         </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary create_account">Create account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  ALERT -->
+    <!-- <div class="alert alert-danger alert-dismissible error" style="display: none;"> -->
+    <div class="alert alert-danger error" style="display: none;">
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+        <h3>An error has occured!</h3>
+        <div class="content">
+
         </div>
     </div>
 </body>

@@ -19,13 +19,14 @@
         }
         if (select_last) {
           projects_select_box.val("" + (index - 1));
+          load_project(index - 1);
         }
       } else {
         projects = [];
       }
       if (!select_last) {
         if (window.project_index != null) {
-          projects_select_box.val(window.project_index || "choose");
+          projects_select_box.val(window.project_index);
         } else {
           projects_select_box.val("choose");
           delete_project_btn.prop("disabled", true);

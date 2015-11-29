@@ -13,12 +13,14 @@ $(document).ready () ->
             if select_last
                 # NOTE: index - 1 because after the loop index == projects.length
                 projects_select_box.val("#{index - 1}")
+                load_project(index - 1)
         else
             projects = []
 
         if not select_last
             if window.project_index?
-                projects_select_box.val(window.project_index or "choose")
+                projects_select_box.val(window.project_index)
+
             else
                 projects_select_box.val("choose")
                 delete_project_btn.prop("disabled", true)
@@ -138,6 +140,9 @@ $(document).ready () ->
             .append message
         return true
     # END - INNER FUNCTIONS
+
+    #######################################################################################################################
+    #######################################################################################################################
 
     delete_project_btn = $(".delete_project")
     new_project_options = $(".new_project_options")

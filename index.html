@@ -47,61 +47,77 @@
                     Paste project url here:
                 </div>
                 <div class="col-xs-9">
-                    <input type="text" class="form-control project_url" placeholder="https://github.com/atom/atom" />
+                    <input type="text" class="form-control project_url" placeholder="https://github.com/atom/atom.git" />
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-3">
-                    <button class="btn btn-warning customize_project" type="button" name="button">Customize project</button>
+                <div class="col-xs-12">
+                    <strong>This will use the default account unless differently setup.</strong>
                 </div>
             </div>
-            <div style="display: none;">
-                <div class="row">
-                    <div class="col-xs-2">
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="vcs" value="github" checked />
-                                GitHub
-                            </label>
-                        </div>
-                        <input type="hidden" name="name" value="https://github.com/" />
-                    </div>
-                    <div class="col-xs-2">
-                        <div class="radio">
-                            <label>
-                                <input type="radio" name="vcs" value="gitlab" />
-                                GitLab
-                            </label>
-                        </div>
-                        <input type="text" class="form-control gitlab_url" placeholder="https://my.gitlab.com/" disabled="" />
-                    </div>
-                    <div class="col-xs-7 col-xs-push-1">
+            <div class="row">
+                <div class="col-xs-2">
+                    <button class="btn btn-primary create_project" type="button" name="button">Create project</button>
+                </div>
+                <div class="col-xs-1">
+                    or
+                </div>
+                <div class="col-xs-9">
+                    <button class="btn btn-warning customize_project" type="button" name="button">
+                        Customize project
+                        &nbsp;
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </button>
+                    <div class="customize_project_target" style="display: none;">
                         <div class="row">
                             <div class="col-xs-1">
                                 <div class="user_icon">
                                     <span class="glyphicon glyphicon-user"></span>
                                 </div>
                             </div>
-                            <div class="col-xs-8" style="display: none;">
+                            <div class="col-xs-6">
                                 <select class="form-control accounts"></select>
                             </div>
-                            <div class="col-xs-3" style="display: none;">
+                            <div class="col-xs-3">
                                 <button class="btn btn-primary" type="button" name="button" data-toggle="modal" data-target="#create_account_modal">Create account</button>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-5">
-                        Project name (including the owner (organization or user))
-                    </div>
-                    <div class="col-xs-7">
-                        <input type="text" class="form-control project_name" placeholder="me/helloworld or my_company/project" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-1 col-xs-push-5">
-                        <button class="btn btn-primary create_project" type="button" name="button">Create project</button>
+                        <div class="row">
+                            <div class="col-xs-2 col-xs-offset-1">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="vcs" value="github" checked />
+                                        GitHub
+                                    </label>
+                                </div>
+                                <input type="hidden" name="name" value="https://github.com/" />
+                            </div>
+                            <div class="col-xs-3 col-xs-offset-1">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="vcs" value="gitlab" />
+                                        GitLab
+                                    </label>
+                                </div>
+                                <input type="text" class="form-control gitlab_url" placeholder="https://my.gitlab.com/" disabled="" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                Project owner
+                            </div>
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control project_owner" placeholder="mishoo" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                Project name
+                            </div>
+                            <div class="col-xs-8">
+                                <input type="text" class="form-control project_name" placeholder="UglifyJS" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -122,6 +138,9 @@
                     </button>
                 </div>
             </div>
+        </div>
+        <div class="issues">
+
         </div>
     </div>
 

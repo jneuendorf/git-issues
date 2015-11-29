@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "octicons";
+    src: url("fonts/octicons.woff") format('woff');
+}
+
 .row {
     margin-top: 10px;
 }
@@ -49,6 +54,20 @@
     color: white;
 }
 
+.actions_options {
+    margin: 60px 0 0 0;
+}
+
+.row.issue {
+    height: 60px;
+}
+.row.issue > .icon {
+    line-height: 60px;
+    text-align: center;
+}
+.row.issue .octicon {
+    font-size: 26px;
+}
 
 /*ALERT*/
 .alert.error {
@@ -57,4 +76,42 @@
     position: fixed;
     top: 100px;
     width: 50%;
+}
+
+
+/*FROM GITHUB*/
+.octicon, .mega-octicon {
+    font: normal normal normal 16px/1 octicons;
+    display: inline-block;
+    text-decoration: none;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.octicon-git-pull-request:before {
+    content: '\f009';
+}
+
+.octicon-issue-opened:before {
+    content: '\f026';
+}
+
+.octicon-issue-closed:before {
+    content: '\f028';
+}
+
+.open.octicon {
+    color: #6cc644;
+}
+.closed.octicon, .reverted.octicon {
+    color: #bd2c00;
+}
+
+.octicon-comment-add:before, .octicon-comment:before {
+    content: '\f02b';
 }

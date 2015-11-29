@@ -3,9 +3,9 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(document).ready(function() {
-    var accounts_select_box, actions_options, checkboxes, create_account, create_account_modal, create_project, delete_project, delete_project_btn, error_alert, fetch_issues, fetch_issues_btn, gitlab_url, load_and_show_accounts, load_and_show_projects, load_issues, load_project, new_project_options, project_name_input, projects_select_box, show_error, show_issues, show_issues_btn;
+    var accounts_select_box, actions_options, checkboxes, create_account, create_account_modal, create_project, delete_project, delete_project_btn, error_alert, fetch_issues, fetch_issues_btn, fill_in_options, gitlab_url, issues_output, load_and_show_accounts, load_and_show_projects, load_issues, load_project, new_project_options, parse_date_string, project_name_input, project_owner_input, project_url, projects_select_box, show_error, show_issues, show_issues_btn;
     load_and_show_projects = function(select_last) {
-      var i, index, len, parts, project, projects;
+      var i, index, len, project, projects;
       if (select_last == null) {
         select_last = false;
       }
@@ -14,8 +14,7 @@
         projects = JSON.parse(localStorage.getItem("projects"));
         for (index = i = 0, len = projects.length; i < len; index = ++i) {
           project = projects[index];
-          parts = project.name.split("/");
-          projects_select_box.append("<option value='" + index + "'>" + parts[1] + " (" + parts[0] + ")</option>");
+          projects_select_box.append("<option value='" + index + "'>" + project.name + " (" + project.owner + ")</option>");
         }
         if (select_last) {
           projects_select_box.val("" + (index - 1));
@@ -34,12 +33,20 @@
       }
       return projects;
     };
-    create_project = function(name, base_url, account_id, kind) {
+    fill_in_options = function() {
+      var kind, url;
+      url = project_url.val();
+      if (url.indexOf("github.com") >= 0) {
+        kind = "github";
+      } else {
+        kind = "gitlab";
+      }
+      checkboxes.filter("[value='" + kind + "']").prop("checked", true);
+      return true;
+    };
+    create_project = function(owner, name, base_url, account_id, kind) {
       var new_project, project;
-      if (base_url && name && (account_id != null)) {
-        if (name[name.length - 1] !== "/") {
-          name += "/";
-        }
+      if (owner && name && base_url && (account_id != null)) {
         base_url = checkboxes.filter(":checked").closest(".radio").siblings("input").val();
         if (base_url[base_url.length - 1] !== "/") {
           base_url += "/";
@@ -57,8 +64,9 @@
           throw new Error("Project '" + name + "' already exists.");
         }
         new_project = {
-          base_url: base_url,
+          owner: owner,
           name: name,
+          base_url: base_url,
           account_id: account_id,
           kind: kind
         };
@@ -85,6 +93,7 @@
       console.log(project_index);
       if ((0 <= project_index && project_index < window.projects.length)) {
         window.project_index = project_index;
+        new_project_options.slideUp(200);
         actions_options.find(".btn").prop("disabled", false);
         delete_project_btn.prop("disabled", false);
         return true;
@@ -144,25 +153,102 @@
       }
       throw new Error("Invalid data given.");
     };
+    parse_date_string = function(date_str) {
+      var date_parts, month_names, parts, time_parts;
+      month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      parts = date_str.slice(0, -1).split("T");
+      date_parts = parts[0].split("-");
+      time_parts = parts[1].split(":");
+      return {
+        date: date_parts[2] + " " + month_names[parseInt(date_parts[1], 10)] + " " + date_parts[0],
+        time: time_parts[0] + ":" + time_parts[1]
+      };
+    };
     load_issues = function() {
       if (localStorage.getItem("issues")) {
         return JSON.parse(localStorage.getItem("issues"));
       }
       return [];
     };
+
+    /*
+    {
+      "url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520",
+      "labels_url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520/labels{/name}",
+      "comments_url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520/comments",
+      "events_url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520/events",
+      "html_url": "https://github.com/mishoo/UglifyJS/pull/520",
+      "id": 110745545,
+      "number": 520,
+      "title": "Update README.org",
+      "user": {
+        "login": "jareddbc",
+        "id": 4805277,
+        "avatar_url": "https://avatars.githubusercontent.com/u/4805277?v=3",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jareddbc",
+        "html_url": "https://github.com/jareddbc",
+        "followers_url": "https://api.github.com/users/jareddbc/followers",
+        "following_url": "https://api.github.com/users/jareddbc/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jareddbc/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jareddbc/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jareddbc/subscriptions",
+        "organizations_url": "https://api.github.com/users/jareddbc/orgs",
+        "repos_url": "https://api.github.com/users/jareddbc/repos",
+        "events_url": "https://api.github.com/users/jareddbc/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jareddbc/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+    
+      ],
+      "state": "open",
+      "locked": false,
+      "assignee": null,
+      "milestone": null,
+      "comments": 0,
+      "created_at": "2015-10-09T22:23:37Z",
+      "updated_at": "2015-10-09T22:23:37Z",
+      "closed_at": null,
+      "pull_request": {
+        "url": "https://api.github.com/repos/mishoo/UglifyJS/pulls/520",
+        "html_url": "https://github.com/mishoo/UglifyJS/pull/520",
+        "diff_url": "https://github.com/mishoo/UglifyJS/pull/520.diff",
+        "patch_url": "https://github.com/mishoo/UglifyJS/pull/520.patch"
+      },
+      "body": ""
+    }
+     */
     show_issues = function(project_index) {
-      var data;
-      data = projects[project_index];
-      if (data != null) {
-        $.get("", {}, function() {});
+      var _issues, created_at, i, issue, len, res;
+      _issues = window.issues[project_index];
+      if (_issues != null) {
+        res = "";
+        for (i = 0, len = _issues.length; i < len; i++) {
+          issue = _issues[i];
+          created_at = parse_date_string(issue.created_at);
+          res += "<div class=\"row issue\">\n    <div class=\"col-xs-1 icon\">\n        <span class=\"octicon octicon-git-pull-request open\"></span>\n    </div>\n    <div class=\"col-xs-10\">\n        <h4>" + issue.title + "</h4>\n        #" + issue.number + " updated on " + created_at.date + " at " + created_at.time + "\n    </div>\n    <div class=\"col-xs-1\">\n        <span class=\"octicon octicon-comment\"></span>\n    </div>\n</div>";
+        }
+        issues_output.empty().append(res);
+        return true;
       }
       throw new Error("Could not find a project at index " + project_index + ".");
     };
     fetch_issues = function(project_index) {
-      var data;
-      data = projects[project_index];
-      if (data != null) {
-        $.get("", {}, function() {});
+      var account_data, project_data, suffix, url;
+      project_data = projects[project_index];
+      if (project_data != null) {
+        account_data = window.accounts[project_data.account_id];
+        url = api_definitions[project_data.kind].url(project_data.base_url);
+        suffix = api_definitions[project_data.kind].fetch_all(project_data.owner, project_data.name, account_data.token);
+        $.get(url + suffix, function(response) {
+          window.issues[project_index] = response;
+          localStorage.setItem("issues", JSON.stringify(window.issues));
+          show_issues(project_index);
+          return true;
+        });
+        return true;
       }
       throw new Error("Could not find a project at index " + project_index + ".");
     };
@@ -172,11 +258,14 @@
       return true;
     };
     delete_project_btn = $(".delete_project");
+    project_url = $(".project_url");
     new_project_options = $(".new_project_options");
     checkboxes = $("[name='vcs']");
+    project_owner_input = $(".project_owner");
     project_name_input = $(".project_name");
     projects_select_box = $(".projects");
     accounts_select_box = $(".accounts");
+    issues_output = $(".issues");
     actions_options = $(".actions_options");
     show_issues_btn = $(".show_issues");
     fetch_issues_btn = $(".fetch_issues");
@@ -195,6 +284,10 @@
       }
       return true;
     });
+    project_url.keyup(function(event) {
+      fill_in_options();
+      return true;
+    });
     $(".new_project").click(function() {
       new_project_options.slideToggle(200);
       return true;
@@ -210,11 +303,16 @@
     $(".create_project").click(function() {
       var error, error1;
       try {
-        create_project(project_name_input.val(), checkboxes.filter(":checked").closest(".radio").siblings("input").val(), accounts_select_box.find("option:selected").val(), checkboxes.filter(":checked").val());
+        create_project(project_owner_input.val(), project_name_input.val(), checkboxes.filter(":checked").closest(".radio").siblings("input").val(), accounts_select_box.find("option:selected").val(), checkboxes.filter(":checked").val());
       } catch (error1) {
         error = error1;
         show_error(error.message);
       }
+      return true;
+    });
+    $(".customize_project").click(function() {
+      $(".customize_project_target").slideToggle(200);
+      $(this).find("span").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
       return true;
     });
     $(".create_account").click(function() {
@@ -242,6 +340,10 @@
         return true;
       }
       throw new Error("There is no current project.");
+    });
+    show_issues_btn.click(function() {
+      show_issues(window.project_index);
+      return true;
     });
     return true;
   });

@@ -8,8 +8,8 @@ $(document).ready () ->
         if localStorage.getItem("projects")
             projects = JSON.parse(localStorage.getItem("projects"))
             for project, index in projects
-                parts = project.name.split "/"
-                projects_select_box.append "<option value='#{index}'>#{parts[1]} (#{parts[0]})</option>"
+                # parts = project.name.split "/"
+                projects_select_box.append "<option value='#{index}'>#{project.name} (#{project.owner})</option>"
             if select_last
                 # NOTE: index - 1 because after the loop index == projects.length
                 projects_select_box.val("#{index - 1}")
@@ -27,10 +27,20 @@ $(document).ready () ->
 
         return projects
 
-    create_project = (name, base_url, account_id, kind) ->
-        if base_url and name and account_id?
-            if name[name.length - 1] isnt "/"
-                name += "/"
+    fill_in_options = () ->
+        url = project_url.val()
+        if url.indexOf("github.com") >= 0
+            kind = "github"
+        else
+            kind = "gitlab"
+
+        checkboxes.filter("[value='#{kind}']").prop("checked", true)
+        return true
+
+    create_project = (owner, name, base_url, account_id, kind) ->
+        if owner and name and base_url and account_id?
+            # if name[name.length - 1] isnt "/"
+            #     name += "/"
             base_url = checkboxes.filter(":checked").closest(".radio").siblings("input").val()
             if base_url[base_url.length - 1] isnt "/"
                 base_url += "/"
@@ -39,8 +49,9 @@ $(document).ready () ->
                 throw new Error("Project '#{name}' already exists.")
 
             new_project =
-                base_url: base_url
+                owner: owner
                 name: name
+                base_url: base_url
                 account_id: account_id
                 kind: kind
             projects.push new_project
@@ -66,6 +77,7 @@ $(document).ready () ->
 
         if 0 <= project_index < window.projects.length
             window.project_index = project_index
+            new_project_options.slideUp(200)
             actions_options.find(".btn").prop("disabled", false)
             delete_project_btn.prop("disabled", false)
 
@@ -113,23 +125,121 @@ $(document).ready () ->
         throw new Error("Invalid data given.")
 
     # ISSUES
+    parse_date_string = (date_str) ->
+        month_names = [
+            "Jan"
+            "Feb"
+            "Mar"
+            "Apr"
+            "May"
+            "Jun"
+            "Jul"
+            "Aug"
+            "Sep"
+            "Oct"
+            "Nov"
+            "Dec"
+        ]
+        # 2014-09-29T15:38:28Z
+        parts = date_str.slice(0, -1).split "T"
+        date_parts = parts[0].split "-"
+        time_parts = parts[1].split ":"
+        return {
+            date: "#{date_parts[2]} #{month_names[parseInt(date_parts[1], 10)]} #{date_parts[0]}"
+            time: "#{time_parts[0]}:#{time_parts[1]}"
+        }
+
+
     load_issues = () ->
         if localStorage.getItem("issues")
             return JSON.parse(localStorage.getItem("issues"))
         return []
 
+    ###
+    {
+      "url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520",
+      "labels_url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520/labels{/name}",
+      "comments_url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520/comments",
+      "events_url": "https://api.github.com/repos/mishoo/UglifyJS/issues/520/events",
+      "html_url": "https://github.com/mishoo/UglifyJS/pull/520",
+      "id": 110745545,
+      "number": 520,
+      "title": "Update README.org",
+      "user": {
+        "login": "jareddbc",
+        "id": 4805277,
+        "avatar_url": "https://avatars.githubusercontent.com/u/4805277?v=3",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jareddbc",
+        "html_url": "https://github.com/jareddbc",
+        "followers_url": "https://api.github.com/users/jareddbc/followers",
+        "following_url": "https://api.github.com/users/jareddbc/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jareddbc/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jareddbc/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jareddbc/subscriptions",
+        "organizations_url": "https://api.github.com/users/jareddbc/orgs",
+        "repos_url": "https://api.github.com/users/jareddbc/repos",
+        "events_url": "https://api.github.com/users/jareddbc/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jareddbc/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+
+      ],
+      "state": "open",
+      "locked": false,
+      "assignee": null,
+      "milestone": null,
+      "comments": 0,
+      "created_at": "2015-10-09T22:23:37Z",
+      "updated_at": "2015-10-09T22:23:37Z",
+      "closed_at": null,
+      "pull_request": {
+        "url": "https://api.github.com/repos/mishoo/UglifyJS/pulls/520",
+        "html_url": "https://github.com/mishoo/UglifyJS/pull/520",
+        "diff_url": "https://github.com/mishoo/UglifyJS/pull/520.diff",
+        "patch_url": "https://github.com/mishoo/UglifyJS/pull/520.patch"
+      },
+      "body": ""
+    }
+    ###
     show_issues = (project_index) ->
-        data = projects[project_index]
-        if data?
-            $.get "", {} , () ->
+        _issues = window.issues[project_index]
+        if _issues?
+            res = ""
+            for issue in _issues
+                created_at = parse_date_string(issue.created_at)
+                res += """<div class="row issue">
+                            <div class="col-xs-1 icon">
+                                <span class="octicon octicon-git-pull-request open"></span>
+                            </div>
+                            <div class="col-xs-10">
+                                <h4>#{issue.title}</h4>
+                                ##{issue.number} updated on #{created_at.date} at #{created_at.time}
+                            </div>
+                            <div class="col-xs-1">
+                                <span class="octicon octicon-comment"></span>
+                            </div>
+                        </div>"""
+            issues_output.empty().append res
+
+            return true
         throw new Error("Could not find a project at index #{project_index}.")
 
     fetch_issues = (project_index) ->
-        data = projects[project_index]
-        if data?
-            $.get "", {} , () ->
+        project_data = projects[project_index]
+        if project_data?
+            account_data = window.accounts[project_data.account_id]
+            url = api_definitions[project_data.kind].url(project_data.base_url)
+            suffix = api_definitions[project_data.kind].fetch_all(project_data.owner, project_data.name, account_data.token)
+            $.get url + suffix, (response) ->
+                window.issues[project_index] = response
+                localStorage.setItem "issues", JSON.stringify(window.issues)
+                show_issues(project_index)
+                return true
+            return true
         throw new Error("Could not find a project at index #{project_index}.")
-
 
     # MISC
     show_error = (message) ->
@@ -145,11 +255,14 @@ $(document).ready () ->
     #######################################################################################################################
 
     delete_project_btn = $(".delete_project")
+    project_url = $(".project_url")
     new_project_options = $(".new_project_options")
     checkboxes = $("[name='vcs']")
+    project_owner_input = $(".project_owner")
     project_name_input = $(".project_name")
     projects_select_box = $(".projects")
     accounts_select_box = $(".accounts")
+    issues_output = $(".issues")
 
     actions_options = $(".actions_options")
     show_issues_btn = $(".show_issues")
@@ -171,6 +284,10 @@ $(document).ready () ->
             load_project parseInt(index, 10)
         return true
 
+    project_url.keyup (event) ->
+        fill_in_options()
+        return true
+
     # toggle new project options
     $(".new_project").click () ->
         new_project_options.slideToggle(200)
@@ -190,6 +307,7 @@ $(document).ready () ->
     $(".create_project").click () ->
         try
             create_project(
+                project_owner_input.val()
                 project_name_input.val()
                 checkboxes.filter(":checked").closest(".radio").siblings("input").val()
                 accounts_select_box.find("option:selected").val()
@@ -197,6 +315,11 @@ $(document).ready () ->
             )
         catch error
             show_error error.message
+        return true
+
+    $(".customize_project").click () ->
+        $(".customize_project_target").slideToggle(200)
+        $(@).find("span").toggleClass("glyphicon-chevron-down glyphicon-chevron-up")
         return true
 
     # create new account
@@ -229,5 +352,9 @@ $(document).ready () ->
             fetch_issues(window.project_index)
             return true
         throw new Error("There is no current project.")
+
+    show_issues_btn.click () ->
+        show_issues(window.project_index)
+        return true
 
     return true

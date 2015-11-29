@@ -3,7 +3,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   $(document).ready(function() {
-    var accounts_select_box, actions_options, checkboxes, create_account, create_account_modal, create_project, delete_project, delete_project_btn, error_alert, fetch_issues, gitlab_url, load_and_show_accounts, load_and_show_projects, load_issues, load_project, new_project_options, project_name_input, projects_select_box, show_error, show_issues;
+    var accounts_select_box, actions_options, checkboxes, create_account, create_account_modal, create_project, delete_project, delete_project_btn, error_alert, fetch_issues, fetch_issues_btn, gitlab_url, load_and_show_accounts, load_and_show_projects, load_issues, load_project, new_project_options, project_name_input, projects_select_box, show_error, show_issues, show_issues_btn;
     load_and_show_projects = function(select_last) {
       var i, index, len, parts, project, projects;
       if (select_last == null) {
@@ -33,7 +33,7 @@
       }
       return projects;
     };
-    create_project = function(name, base_url, account_id) {
+    create_project = function(name, base_url, account_id, kind) {
       var new_project, project;
       if (base_url && name && (account_id != null)) {
         if (name[name.length - 1] !== "/") {
@@ -58,7 +58,8 @@
         new_project = {
           base_url: base_url,
           name: name,
-          account_id: account_id
+          account_id: account_id,
+          kind: kind
         };
         projects.push(new_project);
         localStorage.setItem("projects", JSON.stringify(projects));
@@ -91,7 +92,7 @@
     };
     load_and_show_accounts = function(select_last) {
       var account, accounts, i, index, len;
-      accounts_select_box.empty().append("<option disabled>Choose account</option>");
+      accounts_select_box.empty().append("<option value='choose' disabled>Choose account</option>");
       if (localStorage.getItem("accounts")) {
         accounts = JSON.parse(localStorage.getItem("accounts"));
         for (index = i = 0, len = accounts.length; i < len; index = ++i) {
@@ -176,8 +177,8 @@
     projects_select_box = $(".projects");
     accounts_select_box = $(".accounts");
     actions_options = $(".actions_options");
-    show_issues = $(".show_issues");
-    fetch_issues = $(".fetch_issues");
+    show_issues_btn = $(".show_issues");
+    fetch_issues_btn = $(".fetch_issues");
     create_account_modal = $("#create_account_modal");
     error_alert = $(".alert.error");
     window.projects = load_and_show_projects();
@@ -208,7 +209,7 @@
     $(".create_project").click(function() {
       var error, error1;
       try {
-        create_project(project_name_input.val(), checkboxes.filter(":checked").closest(".radio").siblings("input").val(), accounts_select_box.find("option:selected").val());
+        create_project(project_name_input.val(), checkboxes.filter(":checked").closest(".radio").siblings("input").val(), accounts_select_box.find("option:selected").val(), checkboxes.filter(":checked").val());
       } catch (error1) {
         error = error1;
         show_error(error.message);
@@ -233,6 +234,13 @@
     error_alert.find(".close").click(function() {
       error_alert.fadeOut(200);
       return true;
+    });
+    fetch_issues_btn.click(function() {
+      if (window.project_index != null) {
+        fetch_issues(window.project_index);
+        return true;
+      }
+      throw new Error("There is no current project.");
     });
     return true;
   });

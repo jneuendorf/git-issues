@@ -25,7 +25,7 @@ $(document).ready () ->
 
         return projects
 
-    create_project = (name, base_url, account_id) ->
+    create_project = (name, base_url, account_id, kind) ->
         if base_url and name and account_id?
             if name[name.length - 1] isnt "/"
                 name += "/"
@@ -40,6 +40,7 @@ $(document).ready () ->
                 base_url: base_url
                 name: name
                 account_id: account_id
+                kind: kind
             projects.push new_project
             localStorage.setItem("projects", JSON.stringify(projects))
 
@@ -71,7 +72,7 @@ $(document).ready () ->
 
     # ACCOUNTS
     load_and_show_accounts = (select_last) ->
-        accounts_select_box.empty().append "<option disabled>Choose account</option>"
+        accounts_select_box.empty().append "<option value='choose' disabled>Choose account</option>"
         # load projects from localStorage
         if localStorage.getItem("accounts")
             accounts = JSON.parse(localStorage.getItem("accounts"))
@@ -146,8 +147,8 @@ $(document).ready () ->
     accounts_select_box = $(".accounts")
 
     actions_options = $(".actions_options")
-    show_issues = $(".show_issues")
-    fetch_issues = $(".fetch_issues")
+    show_issues_btn = $(".show_issues")
+    fetch_issues_btn = $(".fetch_issues")
 
     create_account_modal = $("#create_account_modal")
     error_alert = $(".alert.error")
@@ -187,6 +188,7 @@ $(document).ready () ->
                 project_name_input.val()
                 checkboxes.filter(":checked").closest(".radio").siblings("input").val()
                 accounts_select_box.find("option:selected").val()
+                checkboxes.filter(":checked").val()
             )
         catch error
             show_error error.message
@@ -214,5 +216,13 @@ $(document).ready () ->
     error_alert.find(".close").click () ->
         error_alert.fadeOut(200)
         return true
+
+
+    # ISSUES
+    fetch_issues_btn.click () ->
+        if window.project_index?
+            fetch_issues(window.project_index)
+            return true
+        throw new Error("There is no current project.")
 
     return true

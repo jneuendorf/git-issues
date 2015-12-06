@@ -77,6 +77,9 @@
 .row.issue .octicon {
     font-size: 26px;
 }
+.issues_output .labels {
+    margin: 0 0 0 10px;
+}
 img.avatar {
     border-radius: 50%;
     height: 40px;

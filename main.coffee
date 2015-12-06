@@ -218,6 +218,7 @@ $(document).ready () ->
                         icon = "octicon-issue-opened"
                     else
                         icon = "octicon-issue-closed"
+                labels = ("<span class='label' style='background-color:##{label.color};'>#{label.name}</span>" for label in issue.labels)
                 # TODO: labels using string_to_color: <span class="label label-default">Default</span>
                 res += """<div class="row list-group-item issue">
                             <!--span class="badge">14</span-->
@@ -225,7 +226,12 @@ $(document).ready () ->
                                 <span class="octicon #{icon} #{issue.state}"></span>
                             </div>
                             <div class="col-xs-10">
-                                <h4>#{issue.title}</h4>
+                                <h4>
+                                    #{issue.title}
+                                    <span class="labels">
+                                        #{labels}
+                                    </span>
+                                </h4>
                                 ##{issue.number} updated on #{created_at.date} at #{created_at.time} by #{issue.user.login}
                             </div>
                             <div class="col-xs-1">
@@ -234,6 +240,12 @@ $(document).ready () ->
                             </div>
                         </div>"""
             issues_output.empty().append res
+
+            issues_output.find(".avatar").each (idx, elem) ->
+                issue = _issues[idx]
+                elem.onload = () ->
+                    # TODO: get base64 of image, store it in localStorage for saving the image locally
+                    return true
 
             return true
         throw new Error("Could not find a project at index #{project_index}.")
@@ -248,6 +260,9 @@ $(document).ready () ->
                 window.issues[project_index] = response
                 localStorage.setItem "issues", JSON.stringify(window.issues)
                 show_issues(project_index)
+                return true
+            .fail () ->
+                alert "You seeem to be offline or the API server is down!"
                 return true
             return true
         throw new Error("Could not find a project at index #{project_index}.")
@@ -366,6 +381,13 @@ $(document).ready () ->
 
     show_issues_btn.click () ->
         show_issues(window.project_index)
+        return true
+
+    issues_output.on "click", ".issue", () ->
+        console.log "clicked on", @
+        # lazily build modal if not done so yet
+
+        # modal is there! open it
         return true
 
     return true

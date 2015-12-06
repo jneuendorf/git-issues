@@ -221,7 +221,7 @@
     }
      */
     show_issues = function(project_index) {
-      var _issues, created_at, i, icon, issue, len, res;
+      var _issues, created_at, i, icon, issue, label, labels, len, res;
       _issues = window.issues[project_index];
       if (_issues != null) {
         res = "";
@@ -237,9 +237,25 @@
               icon = "octicon-issue-closed";
             }
           }
-          res += "<div class=\"row list-group-item issue\">\n    <!--span class=\"badge\">14</span-->\n    <div class=\"col-xs-1 icon\">\n        <span class=\"octicon " + icon + " " + issue.state + "\"></span>\n    </div>\n    <div class=\"col-xs-10\">\n        <h4>" + issue.title + "</h4>\n        #" + issue.number + " updated on " + created_at.date + " at " + created_at.time + " by " + issue.user.login + "\n    </div>\n    <div class=\"col-xs-1\">\n        <img class=\"avatar\" src=\"" + issue.user.avatar_url + "\" />\n        <!--span class=\"octicon octicon-comment\"></span-->\n    </div>\n</div>";
+          labels = (function() {
+            var j, len1, ref, results;
+            ref = issue.labels;
+            results = [];
+            for (j = 0, len1 = ref.length; j < len1; j++) {
+              label = ref[j];
+              results.push("<span class='label' style='background-color:#" + label.color + ";'>" + label.name + "</span>");
+            }
+            return results;
+          })();
+          res += "<div class=\"row list-group-item issue\">\n    <!--span class=\"badge\">14</span-->\n    <div class=\"col-xs-1 icon\">\n        <span class=\"octicon " + icon + " " + issue.state + "\"></span>\n    </div>\n    <div class=\"col-xs-10\">\n        <h4>\n            " + issue.title + "\n            <span class=\"labels\">\n                " + labels + "\n            </span>\n        </h4>\n        #" + issue.number + " updated on " + created_at.date + " at " + created_at.time + " by " + issue.user.login + "\n    </div>\n    <div class=\"col-xs-1\">\n        <img class=\"avatar\" src=\"" + issue.user.avatar_url + "\" />\n        <!--span class=\"octicon octicon-comment\"></span-->\n    </div>\n</div>";
         }
         issues_output.empty().append(res);
+        issues_output.find(".avatar").each(function(idx, elem) {
+          issue = _issues[idx];
+          return elem.onload = function() {
+            return true;
+          };
+        });
         return true;
       }
       throw new Error("Could not find a project at index " + project_index + ".");
@@ -255,6 +271,9 @@
           window.issues[project_index] = response;
           localStorage.setItem("issues", JSON.stringify(window.issues));
           show_issues(project_index);
+          return true;
+        }).fail(function() {
+          alert("You seeem to be offline or the API server is down!");
           return true;
         });
         return true;
@@ -352,6 +371,10 @@
     });
     show_issues_btn.click(function() {
       show_issues(window.project_index);
+      return true;
+    });
+    issues_output.on("click", ".issue", function() {
+      console.log("clicked on", this);
       return true;
     });
     return true;
